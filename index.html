@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PT Pro Dashboard</title>
+    
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Bootstrap 5 & FullCalendar -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/locales/it.global.min.js'></script>
+
+    <style>
+        :root {
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --accent-primary: #4f46e5; /* Indaco */
+            
+            /* Colori Eventi */
+            --color-lesson: #4338ca; /* Blu scuro */
+            --bg-lesson: #e0e7ff;
+            
+            --color-shift: #059669; /* Verde */
+            --bg-shift: #d1fae5;
+            
+            --color-task: #d97706; /* Arancio */
+            --bg-task: #fef3c7;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            overflow: hidden; /* Evita scroll doppio */
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* LAYOUT */
+        .wrapper {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-card);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #e5e7eb;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.02);
+            z-index: 10;
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent-primary);
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-add-big {
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 600;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+        .btn-add-big:hover { background: #4338ca; transform: translateY(-2px); color: white;}
+
+        .filter-section {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 12px;
+        }
+        
+        .filter-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        /* Toggle Switch Custom */
+        .filter-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+        .filter-label { font-size: 0.95rem; font-weight: 500; display: flex; align-items: center; gap: 8px;}
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block;}
+        .dot-lesson { background: var(--color-lesson); }
+        .dot-shift { background: var(--color-shift); }
+        .dot-task { background: var(--color-task); }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        #calendar-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px;
+            height: 100%;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* FULLCALENDAR CUSTOMIZATION */
+        .fc { border: none !important; }
+        .fc-toolbar-title { font-size: 1.5rem !important; font-weight: 700; text-transform: capitalize; }
+        .fc-button-primary { 
+            background-color: white !important; 
+            color: var(--text-primary) !important; 
+            border: 1px solid #e5e7eb !important;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+        .fc-button-primary:hover { background-color: #f9fafb !important; }
+        .fc-button-active { background-color: #eff6ff !important; color: var(--accent-primary) !important; border-color: var(--accent-primary) !important;}
+        
+        .fc-timegrid-slot { height: 4em !important; border-bottom: 1px solid #f3f4f6; }
+        .fc-theme-standard td, .fc-theme-standard th { border-color: #f3f4f6; }
+        .fc-col-header-cell { padding: 10px 0; background: #f9fafb; }
+        .fc-day-today { background-color: #fcfdfe !important; }
+
+        /* Eventi */
+        .fc-event {
+            border: none !important;
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.1s;
+            cursor: pointer;
+        }
+        .fc-event:hover { transform: scale(1.02); z-index: 50; }
+
+        /* Stili specifici eventi */
+        .evt-lesson {
+            background-color: var(--color-lesson) !important;
+            color: white !important;
+            border-left: 4px solid #312e81 !important;
+        }
+        .evt-shift {
+            background-color: var(--bg-shift) !important;
+            color: var(--color-shift) !important;
+            border: 1px dashed var(--color-shift) !important;
+            opacity: 0.9;
+        }
+        .evt-task {
+            background-color: var(--color-task) !important;
+            color: white !important;
+            border-top: 3px solid #b45309 !important;
+        }
+
+        /* MODALE */
+        .modal-content { border-radius: 16px; border: none; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .modal-header { border-bottom: 1px solid #f3f4f6; padding: 20px 25px; }
+        .modal-body { padding: 25px; background: #fdfdfd; }
+        .modal-footer { border-top: 1px solid #f3f4f6; padding: 15px 25px; }
+        
+        /* Radio Buttons Event Type */
+        .type-selector {
+            display: flex; gap: 10px; margin-bottom: 20px;
+        }
+        .type-option {
+            flex: 1;
+            text-align: center;
+        }
+        .type-option input { display: none; }
+        .type-option label {
+            display: block;
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+        .type-option input:checked + label {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+            background: #eef2ff;
+        }
+
+        /* LOADER */
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9); z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+        <!-- SIDEBAR -->
+        <nav class="sidebar">
+            <div class="brand">
+                <i class="bi bi-activity"></i> PT Manager
+            </div>
+
+            <button class="btn-add-big" onclick="openModal()">
+                <i class="bi bi-plus-lg"></i> Nuovo Evento
+            </button>
+
+            <div class="filter-section">
+                <div class="filter-title">Filtra Visualizzazione</div>
+                
+                <div class="filter-row">
+                    <div class="filter-label"><span class="dot dot-lesson"></span> Lezioni Clienti</div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input filter-check" type="checkbox" value="lesson" checked onchange="refreshCalendarFilters()">
+                    </div>
+                </div>
+
+                <div class="filter-row">
+                    <div class="filter-label"><span class="dot dot-shift"></span> Miei Turni</div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input filter-check" type="checkbox" value="shift" checked onchange="refreshCalendarFilters()">
+                    </div>
+                </div>
+
+                <div class="filter-row">
+                    <div class="filter-label"><span class="dot dot-task"></span> Task / Note</div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input filter-check" type="checkbox" value="task" checked onchange="refreshCalendarFilters()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-auto text-muted small">
+                <i class="bi bi-cloud-check"></i> Firebase Connected
+            </div>
+        </nav>
+
+        <!-- MAIN CALENDAR AREA -->
+        <main class="main-content">
+            <div id="calendar-card">
+                <div id="calendar"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal fade" id="eventModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="modalTitle">Gestisci Appuntamento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="eventForm">
+                        <input type="hidden" id="eventId">
+
+                        <!-- Tipo -->
+                        <div class="type-selector">
+                            <div class="type-option">
+                                <input type="radio" name="eventType" id="t_lesson" value="lesson" checked onclick="toggleFields()">
+                                <label for="t_lesson"><i class="bi bi-people-fill"></i> Lezione</label>
+                            </div>
+                            <div class="type-option">
+                                <input type="radio" name="eventType" id="t_shift" value="shift" onclick="toggleFields()">
+                                <label for="t_shift"><i class="bi bi-clock-history"></i> Turno</label>
+                            </div>
+                            <div class="type-option">
+                                <input type="radio" name="eventType" id="t_task" value="task" onclick="toggleFields()">
+                                <label for="t_task"><i class="bi bi-list-check"></i> Task</label>
+                            </div>
+                        </div>
+
+                        <!-- Orari -->
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">Inizio</label>
+                                <input type="datetime-local" class="form-control" id="startInput">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small text-muted text-uppercase fw-bold">Fine</label>
+                                <input type="datetime-local" class="form-control" id="endInput">
+                            </div>
+                        </div>
+
+                        <!-- Campi Lezione -->
+                        <div id="lessonFields">
+                            <div class="mb-3">
+                                <label class="form-label">Cliente</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
+                                    <input type="text" class="form-control" id="clientName" placeholder="Nome e Cognome">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Allegato (PDF/IMG)</label>
+                                <input type="file" class="form-control" id="fileInput">
+                                <div class="mt-2" id="currentFileLink"></div>
+                            </div>
+                        </div>
+
+                        <!-- Campi Task / Note Generiche -->
+                        <div id="genericFields">
+                             <div class="mb-3">
+                                <label class="form-label">Note / Descrizione</label>
+                                <textarea class="form-control" id="notes" rows="3" placeholder="Scrivi qui i dettagli..."></textarea>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-outline-danger me-auto border-0" id="btnDelete" onclick="deleteCurrentEvent()" style="display:none;">
+                        <i class="bi bi-trash"></i> Elimina
+                    </button>
+                    <button type="button" class="btn btn-dark px-4" onclick="saveEvent()">Salva Modifiche</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOADER -->
+    <div id="loader">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+        <p class="mt-2 text-muted fw-bold">Caricamento Agenda...</p>
+    </div>
+
+    <!-- Logic -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        // Importiamo SOLO Firestore (il database), niente Storage
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // TUA CONFIGURAZIONE (Rimane uguale)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDuYQqNPgdQ6e5sO7hzMnrrmzg7cBmHusA",
+            authDomain: "calendario-79a93.firebaseapp.com",
+            projectId: "calendario-79a93",
+            storageBucket: "calendario-79a93.appspot.com",
+            messagingSenderId: "981317951328",
+            appId: "1:981317951328:web:38b9b95bfe654b4904c805",
+            measurementId: "G-08GZ6DPFWK"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        // Niente variabile 'storage' qui!
+
+        let calendar;
+        let allEvents = []; 
+        const modalElement = new bootstrap.Modal(document.getElementById('eventModal'));
+
+        // --- INIZIALIZZA APP ---
+        document.addEventListener('DOMContentLoaded', function() {
+            initCalendar();
+            loadEvents();
+        });
+
+        function initCalendar() {
+            const calendarEl = document.getElementById('calendar');
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                locale: 'it', 
+                firstDay: 1, // Lunedì
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,listWeek'
+                },
+                slotMinTime: "06:00:00",
+                slotMaxTime: "23:00:00",
+                allDaySlot: false,
+                height: '100%',
+                expandRows: true,
+                slotEventOverlap: false, 
+                nowIndicator: true,
+                
+                dateClick: (info) => { openModalNew(info.date); },
+                eventClick: (info) => { openModalEdit(info.event); },
+                eventContent: function(arg) {
+                    let icon = '';
+                    if(arg.event.extendedProps.type === 'lesson') icon = '<i class="bi bi-person-fill"></i>';
+                    else if(arg.event.extendedProps.type === 'shift') icon = '<i class="bi bi-clock"></i>';
+                    else if(arg.event.extendedProps.type === 'task') icon = '<i class="bi bi-pin-angle-fill"></i>';
+                    return { html: `<div class="d-flex gap-1 align-items-center fw-bold text-truncate">${icon} <span>${arg.event.title}</span></div>` }
+                }
+            });
+            calendar.render();
+        }
+
+        // --- FIREBASE LOGIC ---
+        async function loadEvents() {
+            showLoader(true);
+            try {
+                const q = await getDocs(collection(db, "events"));
+                allEvents = []; 
+                q.forEach(doc => {
+                    const data = doc.data();
+                    let title = data.title;
+                    let className = 'evt-task';
+                    
+                    if(data.type === 'lesson') {
+                        title = data.clientName;
+                        className = 'evt-lesson';
+                    } else if (data.type === 'shift') {
+                        title = "Turno"; 
+                        className = 'evt-shift';
+                    }
+
+                    allEvents.push({
+                        id: doc.id,
+                        title: title || "Evento",
+                        start: data.start,
+                        end: data.end,
+                        classNames: [className],
+                        extendedProps: { ...data } 
+                    });
+                });
+                refreshCalendarFilters(); 
+            } catch (e) {
+                console.error(e);
+                alert("Errore caricamento dati: " + e.message);
+            }
+            showLoader(false);
+        }
+
+        window.refreshCalendarFilters = function() {
+            const activeTypes = [];
+            document.querySelectorAll('.filter-check:checked').forEach(cb => activeTypes.push(cb.value));
+            const filtered = allEvents.filter(ev => activeTypes.includes(ev.extendedProps.type));
+            calendar.removeAllEvents();
+            calendar.addEventSource(filtered);
+        }
+
+        // --- SALVATAGGIO CON FILE BASE64 (Senza Storage esterno) ---
+        window.saveEvent = async function() {
+            const id = document.getElementById('eventId').value;
+            const type = document.querySelector('input[name="eventType"]:checked').value;
+            const start = document.getElementById('startInput').value;
+            const end = document.getElementById('endInput').value;
+            const clientName = document.getElementById('clientName').value;
+            const notes = document.getElementById('notes').value;
+            const fileInput = document.getElementById('fileInput');
+
+            if(!start || !end) return alert("Inserisci orari");
+
+            if(type === 'lesson') {
+                if(checkOverlap(start, end, id)) {
+                    if(!confirm("⚠️ Attenzione: Sovrapposizione rilevata! Continuare?")) return;
+                }
+            }
+
+            // Funzione interna per salvare i dati
+            const saveDataToDb = async (fileData, fileName) => {
+                showLoader(true);
+                const data = {
+                    type, start, end, 
+                    clientName: type === 'lesson' ? clientName : "",
+                    notes,
+                    title: type === 'task' ? notes.substring(0, 20) : (type === 'lesson' ? clientName : "Turno"),
+                    // Se c'è un nuovo file uso quello, altrimenti tengo quello vecchio (o stringa vuota)
+                    fileUrl: fileData || (document.getElementById('currentFileLink').dataset.url || ""),
+                    fileName: fileName || (document.getElementById('currentFileLink').dataset.name || "")
+                };
+
+                try {
+                    if(id) await updateDoc(doc(db, "events", id), data);
+                    else await addDoc(collection(db, "events"), data);
+                    
+                    modalElement.hide();
+                    loadEvents();
+                } catch(e) { 
+                    console.error(e); 
+                    alert("Errore salvataggio: " + e.message); 
+                } finally {
+                    showLoader(false);
+                }
+            };
+
+            // Gestione File
+            if(fileInput.files[0]) {
+                const f = fileInput.files[0];
+                
+                // CONTROLLO DIMENSIONE (Limite 800KB circa per stare sicuri nel DB)
+                if (f.size > 800 * 1024) {
+                    alert("⚠️ Il file è troppo grande! Per questo metodo 'senza costi', carica file sotto gli 800KB (quasi 1MB).");
+                    return;
+                }
+
+                // Converti file in testo (Base64)
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64String = e.target.result;
+                    saveDataToDb(base64String, f.name);
+                };
+                reader.readAsDataURL(f); // Avvia lettura
+            } else {
+                // Nessun file nuovo caricato, salva direttamente
+                saveDataToDb(null, null);
+            }
+        }
+
+        window.deleteCurrentEvent = async function() {
+            const id = document.getElementById('eventId').value;
+            if(!id) return;
+            if(confirm("Eliminare definitivamente?")) {
+                showLoader(true);
+                await deleteDoc(doc(db, "events", id));
+                modalElement.hide();
+                loadEvents();
+                showLoader(false);
+            }
+        }
+
+        function checkOverlap(start, end, excludeId) {
+            const nStart = new Date(start).getTime();
+            const nEnd = new Date(end).getTime();
+            const lessons = allEvents.filter(e => e.extendedProps.type === 'lesson' && e.id !== excludeId);
+            return lessons.some(ev => {
+                const eStart = new Date(ev.start).getTime();
+                const eEnd = new Date(ev.end).getTime();
+                return (nStart < eEnd && nEnd > eStart);
+            });
+        }
+
+        window.openModal = function() { openModalNew(new Date()); }
+        
+        function openModalNew(dateObj) {
+            resetForm();
+            let d = new Date(dateObj);
+            if (dateObj.getHours() === 0 && dateObj.getMinutes() === 0) {
+                 d = new Date(); d.setMinutes(0,0,0);
+            }
+            document.getElementById('startInput').value = toIso(d);
+            document.getElementById('endInput').value = toIso(new Date(d.getTime() + 3600000));
+            modalElement.show();
+        }
+
+        function openModalEdit(event) {
+            resetForm();
+            const p = event.extendedProps;
+            document.getElementById('eventId').value = event.id;
+            document.getElementById('startInput').value = toIso(new Date(event.start));
+            document.getElementById('endInput').value = toIso(new Date(event.end));
+            document.getElementById('btnDelete').style.display = 'inline-block';
+            
+            document.querySelector(`input[name="eventType"][value="${p.type}"]`).checked = true;
+            document.getElementById('clientName').value = p.clientName || "";
+            document.getElementById('notes').value = p.notes || "";
+            
+            if(p.fileUrl) {
+                const div = document.getElementById('currentFileLink');
+                // Nota: download="${p.fileName}" forza il browser a scaricare il file invece di aprirlo
+                div.innerHTML = `<a href="${p.fileUrl}" download="${p.fileName}" class="badge bg-primary text-decoration-none p-2"><i class="bi bi-download"></i> Scarica: ${p.fileName || 'File'}</a>`;
+                div.dataset.url = p.fileUrl;
+                div.dataset.name = p.fileName;
+            }
+            toggleFields();
+            modalElement.show();
+        }
+
+        window.toggleFields = function() {
+            const type = document.querySelector('input[name="eventType"]:checked').value;
+            const lessonDiv = document.getElementById('lessonFields');
+            const genericDiv = document.getElementById('genericFields'); 
+            
+            if(type === 'lesson') {
+                lessonDiv.style.display = 'block';
+                genericDiv.style.display = 'block';
+            } else if (type === 'task') {
+                lessonDiv.style.display = 'none';
+                genericDiv.style.display = 'block';
+            } else { 
+                lessonDiv.style.display = 'none';
+                genericDiv.style.display = 'none'; 
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('eventForm').reset();
+            document.getElementById('eventId').value = "";
+            document.getElementById('currentFileLink').innerHTML = "";
+            document.getElementById('currentFileLink').dataset.url = "";
+            document.getElementById('currentFileLink').dataset.name = "";
+            document.getElementById('btnDelete').style.display = 'none';
+            document.getElementById('t_lesson').checked = true;
+            toggleFields();
+        }
+
+        function toIso(date) {
+            const pad = n => n<10 ? '0'+n : n;
+            return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+        }
+
+        function showLoader(show) { document.getElementById('loader').style.display = show ? 'flex' : 'none'; }
+    </script>
+</body>
+</html>
