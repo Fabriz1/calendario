@@ -134,52 +134,102 @@
         }
 
         /* FULLCALENDAR CUSTOMIZATION */
-        .fc { border: none !important; }
-        .fc-toolbar-title { font-size: 1.5rem !important; font-weight: 700; text-transform: capitalize; }
+        /* FULLCALENDAR CUSTOMIZATION - STILE APPLE */
+        .fc { border: none !important; font-family: 'Inter', sans-serif; }
+        
+        /* HEADER & GRIGLIA */
+        .fc-theme-standard td, .fc-theme-standard th { border-color: #f1f1f1; }
+        .fc-timegrid-slot { height: 50px !important; border-bottom: 1px solid #f8f9fa; } /* Righe più alte */
+        .fc-col-header-cell { background: #fff; padding: 15px 0; border-bottom: 1px solid #eee; }
+        .fc-col-header-cell-cushion { color: #111; font-weight: 800; text-transform: uppercase; text-decoration: none !important; font-size: 0.85rem; }
+        .fc-timegrid-axis-cushion { color: #999; font-size: 0.75rem; }
+        
+        /* PULSANTI TOOLBAR */
+        .fc-header-toolbar { margin-bottom: 1.5rem !important; }
+        .fc-toolbar-title { font-size: 1.5rem !important; font-weight: 800; color: #111; }
         .fc-button-primary { 
-            background-color: white !important; 
-            color: var(--text-primary) !important; 
+            background-color: transparent !important; 
+            color: #111 !important; 
             border: 1px solid #e5e7eb !important;
             font-weight: 600;
-            text-transform: capitalize;
+            border-radius: 8px !important;
+            box-shadow: none !important;
+            padding: 6px 12px !important;
         }
-        .fc-button-primary:hover { background-color: #f9fafb !important; }
-        .fc-button-active { background-color: #eff6ff !important; color: var(--accent-primary) !important; border-color: var(--accent-primary) !important;}
-        
-        .fc-timegrid-slot { height: 4em !important; border-bottom: 1px solid #f3f4f6; }
-        .fc-theme-standard td, .fc-theme-standard th { border-color: #f3f4f6; }
-        .fc-col-header-cell { padding: 10px 0; background: #f9fafb; }
-        .fc-day-today { background-color: #fcfdfe !important; }
+        .fc-button-active { background-color: #111 !important; color: white !important; border-color: #111 !important; }
+        .fc-button-primary:hover { background-color: #f3f4f6 !important; }
 
-        /* Eventi */
+        /* EVENTI (Design a pillola pulita) */
         .fc-event {
             border: none !important;
-            border-radius: 6px;
-            padding: 4px 8px;
+            border-radius: 6px !important;
+            padding: 2px 5px;
             font-size: 0.85rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.04);
             transition: transform 0.1s;
-            cursor: pointer;
         }
         .fc-event:hover { transform: scale(1.02); z-index: 50; }
 
-        /* Stili specifici eventi */
+        /* Colori Eventi ridefiniti per stile Apple */
+        /* --- COLORI EVENTI STILE APPLE (Testo Scuro su Sfondo Chiaro) --- */
+        
+        /* Regola generale evento */
+        .fc-event {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-weight: 700 !important; /* Testo bello grassetto */
+            border: none !important;
+            border-radius: 6px !important;
+        }
+        
+        /* LEZIONE (Blu) */
         .evt-lesson {
-            background-color: var(--color-lesson) !important;
-            color: white !important;
-            border-left: 4px solid #312e81 !important;
+            background-color: #e0e7ff !important; /* Sfondo Blu Chiaro */
+            border-left: 4px solid #4338ca !important; /* Bordo Blu Scuro */
         }
+        /* Forza il testo BLU SCURO ovunque dentro l'evento */
+        .evt-lesson, .evt-lesson div, .evt-lesson span {
+            color: #1e1b4b !important; 
+        }
+
+        /* TURNO (Verde) */
         .evt-shift {
-            background-color: var(--bg-shift) !important;
-            color: var(--color-shift) !important;
-            border: 1px dashed var(--color-shift) !important;
-            opacity: 0.9;
+            background-color: #d1fae5 !important; /* Sfondo Verde Chiaro */
+            border-left: 4px solid #059669 !important; /* Bordo Verde Scuro */
         }
+        /* Forza il testo VERDE SCURO ovunque dentro l'evento */
+        .evt-shift, .evt-shift div, .evt-shift span {
+            color: #064e3b !important; 
+        }
+
+        /* TASK (Arancione) */
         .evt-task {
-            background-color: var(--color-task) !important;
-            color: white !important;
-            border-top: 3px solid #b45309 !important;
+            background-color: #fef3c7 !important; /* Sfondo Giallo Chiaro */
+            border-left: 4px solid #d97706 !important; /* Bordo Arancio */
         }
+        /* Forza il testo MARRONE SCURO ovunque dentro l'evento */
+        .evt-task, .evt-task div, .evt-task span {
+            color: #78350f !important;
+        }
+
+        /* AGENDA / LIST VIEW (La trasformazione vera) */
+        .fc-list { border: none !important; }
+        .fc-list-day-cushion { background-color: #fafafa !important; padding: 15px !important; }
+        .fc-list-day-text { font-size: 1.1rem; font-weight: 800; color: #000; text-transform: capitalize; }
+        .fc-list-day-side-text { font-size: 1rem; color: #888; font-weight: 400; }
+        
+        .fc-list-event td { border: none !important; padding: 12px 15px !important; background: #fff; border-bottom: 1px solid #f3f4f6 !important; }
+        .fc-list-event:hover td { background: #f8fafc !important; cursor: pointer; }
+        
+        .fc-list-event-graphic { display: none; } /* Nascondiamo il pallino standard */
+        .fc-list-event-time { width: 70px; font-weight: 600; color: #6b7280; font-size: 0.9rem; }
+        .fc-list-event-title { font-weight: 600; font-size: 1rem; color: #1f2937; display: flex; align-items: center; gap: 10px; }
+        
+        /* Pallino colorato custom nell'agenda */
+        .fc-list-event-title::before { content: ''; width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .evt-lesson .fc-list-event-title::before { background: #4f46e5; }
+        .evt-shift .fc-list-event-title::before { background: #10b981; }
+        .evt-task .fc-list-event-title::before { background: #f59e0b; }
 
         /* MODALE */
         .modal-content { border-radius: 16px; border: none; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
@@ -218,9 +268,137 @@
             background: rgba(255,255,255,0.9); z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
+
+
+        /* --- RESPONSIVE STYLES (MOBILE) --- */
+        
+        /* Bottone Menu Mobile (inizialmente nascosto su desktop) */
+        .mobile-menu-btn {
+            display: none; 
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--accent-primary);
+            color: white;
+            border-radius: 50%;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 100;
+            font-size: 1.5rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Overlay scuro per quando il menu è aperto */
+        #sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9;
+            backdrop-filter: blur(2px);
+        }
+
+        @media (max-width: 991px) {
+            /* 1. Mostra il bottone menu */
+            .mobile-menu-btn { display: flex; }
+
+            /* 2. Trasforma la Sidebar in un "Drawer" laterale */
+            .sidebar {
+                position: fixed;
+                left: -100%; /* Nascondi fuori schermo */
+                top: 0;
+                height: 100vh;
+                width: 85%; /* Occupa quasi tutto lo schermo */
+                max-width: 320px;
+                transition: left 0.3s ease-in-out;
+            }
+            
+            /* Classe per aprire la sidebar */
+            .sidebar.active { left: 0; }
+            
+            /* Mostra overlay quando attivo */
+            .sidebar.active ~ #sidebar-overlay { display: block; }
+
+            /* 3. Main content a tutto schermo */
+            .main-content {
+                width: 100%;
+                padding: 10px; /* Meno padding su mobile */
+            }
+
+            /* 4. Adattamenti FullCalendar */
+            .fc-header-toolbar {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .fc-toolbar-title {
+                font-size: 1.2rem !important;
+            }
+            .fc .fc-button {
+                padding: 4px 8px;
+                font-size: 0.85rem;
+            }
+            /* Nascondi pulsanti mese/settimana troppo ingombranti su mobile molto piccoli */
+            .fc-right {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+        }
+        /* --- MOBILE RESPONSIVE --- */
+        #mobile-menu-btn { display: none; }
+        #sidebar-overlay { display: none; }
+
+        @media (max-width: 991px) {
+            /* Struttura */
+            .wrapper { position: relative; overflow-x: hidden; }
+            .sidebar {
+                position: fixed; left: -100%; top: 0; height: 100vh; width: 85%; max-width: 300px;
+                z-index: 1050; transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .sidebar.active { left: 0; box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
+            
+            /* Overlay scuro */
+            #sidebar-overlay {
+                display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+                background: rgba(0,0,0,0.4); z-index: 1040; backdrop-filter: blur(2px);
+            }
+            .sidebar.active ~ #sidebar-overlay { display: block; }
+
+            /* Bottone Menu */
+            #mobile-menu-btn {
+                display: flex; align-items: center; justify-content: center;
+                position: fixed; bottom: 25px; right: 25px;
+                width: 56px; height: 56px; border-radius: 50%;
+                background: var(--accent-primary); color: white;
+                border: none; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+                font-size: 1.5rem; z-index: 1030;
+            }
+
+            /* Fix Calendario Mobile */
+            .main-content { padding: 10px; width: 100%; }
+            #calendar-card { padding: 10px; border-radius: 0; box-shadow: none; }
+            
+            .fc-header-toolbar { flex-direction: column; gap: 10px; align-items: stretch !important; }
+            .fc-toolbar-chunk { display: flex; justify-content: space-between; align-items: center; }
+            .fc-toolbar-title { font-size: 1.25rem !important; }
+            
+            /* Nascondi pulsanti inutili su mobile */
+            
+        }
     </style>
 </head>
 <body>
+<body>
+    <!-- NUOVO: Overlay per chiudere il menu cliccando fuori -->
+    <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- NUOVO: Bottone galleggiante per Mobile -->
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">
+        <i class="bi bi-list"></i>
+    </button>
 
     <div class="wrapper">
         <!-- SIDEBAR -->
@@ -389,15 +567,37 @@
 
         function initCalendar() {
             const calendarEl = document.getElementById('calendar');
+            // Rileva se larghezza schermo è inferiore a 991px (Tablet/Mobile)
+            const isMobile = window.innerWidth < 991; 
+
             calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'timeGridWeek',
+                // Se Mobile -> Vista 3 Giorni, Altrimenti -> Settimana
+                initialView: isMobile ? 'mobileThreeDay' : 'timeGridWeek',
                 locale: 'it', 
-                firstDay: 1, // Lunedì
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,listWeek'
+                firstDay: 1, 
+                
+                // DEFINIZIONE VISTA "3 GIORNI"
+                views: {
+                    mobileThreeDay: {
+                        type: 'timeGrid',
+                        duration: { days: 3 }, // Mostra 3 giorni
+                        buttonText: '3 gg'     // Testo del bottone
+                    }
                 },
+
+                headerToolbar: {
+                    left: 'prev,next', // Frecce navigazione
+                    center: 'title',
+                    // MOBILE: Solo "Mese" e "3 gg"
+                    // DESKTOP: "Mese", "Settimana", "Agenda"
+                    right: isMobile ? 'dayGridMonth,mobileThreeDay' : 'dayGridMonth,timeGridWeek,listWeek'
+                },
+                
+                // FORMATTAZIONE (Stile pulito)
+                // Es Mobile: "Lun 9" | Es Desktop: "Lunedì 9"
+                dayHeaderFormat: { weekday: isMobile ? 'short' : 'long', day: 'numeric', omitCommas: true }, 
+                slotLabelFormat: { hour: 'numeric', minute: '2-digit', omitZeroMinute: false, hour12: false },
+                
                 slotMinTime: "06:00:00",
                 slotMaxTime: "23:00:00",
                 allDaySlot: false,
@@ -408,16 +608,32 @@
                 
                 dateClick: (info) => { openModalNew(info.date); },
                 eventClick: (info) => { openModalEdit(info.event); },
+                
+                // Render dell'evento grafico
                 eventContent: function(arg) {
                     let icon = '';
+                    // Icone semplici
                     if(arg.event.extendedProps.type === 'lesson') icon = '<i class="bi bi-person-fill"></i>';
-                    else if(arg.event.extendedProps.type === 'shift') icon = '<i class="bi bi-clock"></i>';
-                    else if(arg.event.extendedProps.type === 'task') icon = '<i class="bi bi-pin-angle-fill"></i>';
-                    return { html: `<div class="d-flex gap-1 align-items-center fw-bold text-truncate">${icon} <span>${arg.event.title}</span></div>` }
+                    else if(arg.event.extendedProps.type === 'task') icon = '<i class="bi bi-pin-fill"></i>';
+                    // Nota: Per i turni niente icona per lasciare spazio al testo
+                    
+                    return { html: `<div class="d-flex gap-1 align-items-center text-truncate" style="line-height:1.2; font-weight:700;">${icon} <span>${arg.event.title}</span></div>` }
                 }
             });
             calendar.render();
         }
+        
+        
+        
+        
+        window.addEventListener('resize', () => {
+            if(calendar) {
+                const newView = window.innerWidth < 768 ? 'timeGridDay' : 'timeGridWeek';
+                if(calendar.view.type !== newView) {
+                    calendar.changeView(newView);
+                }
+            }
+        });
 
         // --- FIREBASE LOGIC ---
         async function loadEvents() {
@@ -624,6 +840,9 @@
         }
 
         function showLoader(show) { document.getElementById('loader').style.display = show ? 'flex' : 'none'; }
+        window.toggleSidebar = function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        }
     </script>
 </body>
 </html>
