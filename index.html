@@ -2,8 +2,8 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PT Pro System - Gestionale</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PT Pro System</title>
     
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
     <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/locales/it.global.min.js'></script>
 
-    <!-- Bootstrap Bundle JS (IMPORTANTE PER I MODAL) -->
+    <!-- Bootstrap Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
@@ -26,18 +26,18 @@
             --text-main: #111827; 
             --accent: #4f46e5;
             
-            /* Colori Eventi ad Alto Contrasto */
+            /* Colori Eventi Scelti da Te */
             --evt-lesson-bg: #e0e7ff;
             --evt-lesson-border: #4f46e5;
-            --evt-lesson-text: #1e1b4b; /* Blu scurissimo */
+            --evt-lesson-text: #1e1b4b; /* Testo Scuro */
 
             --evt-shift-bg: #dcfce7;
             --evt-shift-border: #16a34a;
-            --evt-shift-text: #14532d; /* Verde scurissimo */
+            --evt-shift-text: #14532d; /* Testo Scuro */
 
             --evt-task-bg: #fef9c3;
             --evt-task-border: #ca8a04;
-            --evt-task-text: #713f12; /* Marrone scurissimo */
+            --evt-task-text: #713f12; /* Testo Scuro */
         }
 
         body {
@@ -49,17 +49,18 @@
             margin: 0;
         }
 
-        .wrapper { display: flex; height: 100vh; }
+        .wrapper { display: flex; height: 100vh; width: 100%; }
 
-        /* SIDEBAR */
+        /* --- SIDEBAR DESKTOP --- */
         .sidebar {
             width: 280px;
             background: var(--bg-sidebar);
             padding: 20px;
             display: flex; flex-direction: column;
             border-right: 1px solid #e5e7eb;
-            z-index: 20;
+            z-index: 1000;
             overflow-y: auto;
+            flex-shrink: 0; /* Non rimpicciolire */
         }
         .brand { font-size: 1.4rem; font-weight: 800; color: var(--accent); margin-bottom: 30px; display: flex; align-items: center; gap: 10px; }
         
@@ -72,33 +73,24 @@
         .nav-btn.primary { background: var(--accent); color: white; border: none; text-align: center; justify-content: center; }
         .nav-btn.primary:hover { background: #4338ca; }
 
-        /* MAIN CALENDAR */
-        .main-content { flex: 1; padding: 20px; position: relative; overflow: hidden; }
-        #calendar-card { background: white; border-radius: 12px; height: 100%; padding: 15px; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        /* --- MAIN CONTENT --- */
+        .main-content { flex: 1; padding: 20px; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+        #calendar-card { background: white; border-radius: 12px; flex: 1; padding: 15px; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden; }
 
-        /* FULLCALENDAR FIXES */
+        /* --- CALENDAR STYLING --- */
         .fc-theme-standard td, .fc-theme-standard th { border-color: #f1f1f1; }
-        
-        /* Bottoni Header (Mese, Settimana...) */
         .fc-button-primary { 
-            background-color: white !important; 
-            color: #333 !important; 
-            border: 1px solid #e5e7eb !important; 
-            font-weight: 600; 
-            text-transform: capitalize;
+            background-color: white !important; color: #333 !important; 
+            border: 1px solid #e5e7eb !important; font-weight: 600; text-transform: capitalize;
         }
-        /* Stato Attivo (Cliccato) */
         .fc-button-active { 
-            background-color: #374151 !important; /* Grigio scuro */
-            color: white !important; 
-            border-color: #374151 !important;
-            box-shadow: none !important;
+            background-color: #374151 !important; color: white !important; border-color: #374151 !important;
         }
         
-        /* EVENTI */
-        .fc-event { border: none !important; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-radius: 4px; padding: 1px 2px; }
+        /* Eventi (Stile Grafico) */
+        .fc-event { border: none !important; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-radius: 4px; padding: 1px 2px; font-size: 0.85rem; }
         
-        /* CLASSI COLORI (con !important per sovrascrivere tutto) */
+        /* Sovrascrittura Colori Eventi */
         .evt-lesson { background-color: var(--evt-lesson-bg) !important; border-left: 4px solid var(--evt-lesson-border) !important; }
         .evt-lesson div, .evt-lesson span, .evt-lesson i { color: var(--evt-lesson-text) !important; font-weight: 700 !important; }
 
@@ -108,43 +100,88 @@
         .evt-task { background-color: var(--evt-task-bg) !important; border-left: 4px solid var(--evt-task-border) !important; }
         .evt-task div, .evt-task span, .evt-task i { color: var(--evt-task-text) !important; font-weight: 700 !important; }
 
-        /* Badge Pagamento */
         .pay-badge { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 5px; border: 1px solid rgba(0,0,0,0.1); }
         .pay-pending { background: #dc2626; box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2); }
         .pay-ok { background: #16a34a; }
 
-        /* MODALI */
-        .modal-content { border-radius: 12px; border: none; }
-        .nav-tabs .nav-link.active { color: var(--accent); border-bottom: 2px solid var(--accent); font-weight: bold; }
-        .file-card { border: 1px solid #e5e7eb; padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
-        
-        /* MOBILE */
-        .mobile-toggle { display: none; position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px; background: var(--accent); color: white; border-radius: 50%; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 100; font-size: 1.5rem; }
+        /* --- MOBILE HEADER & OVERLAY (Nascosti su Desktop) --- */
+        .mobile-header { display: none; }
+        .sidebar-overlay { display: none; }
+
+        /* --- MEDIA QUERIES (RENDE RESPONSIVE IL TUTTO) --- */
         @media (max-width: 991px) {
-            .mobile-toggle { display: block; }
-            .sidebar { position: fixed; left: -100%; top: 0; height: 100vh; width: 85%; max-width: 320px; transition: 0.3s; z-index: 1050; box-shadow: 10px 0 20px rgba(0,0,0,0.1); }
+            /* Layout Mobile */
+            .wrapper { flex-direction: column; height: 100vh; }
+            
+            /* Header Mobile Visibile */
+            .mobile-header { 
+                display: flex; align-items: center; justify-content: space-between;
+                padding: 10px 15px; background: white; border-bottom: 1px solid #eee; z-index: 1020;
+            }
+            .mobile-brand { font-weight: 800; font-size: 1.2rem; color: var(--accent); }
+
+            /* Sidebar Mobile (Offcanvas) */
+            .sidebar {
+                position: fixed; top: 0; left: -100%; height: 100%; width: 85%; max-width: 300px;
+                transition: left 0.3s ease; box-shadow: 10px 0 20px rgba(0,0,0,0.1); z-index: 1050;
+            }
             .sidebar.active { left: 0; }
-            .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1040; }
+            .sidebar-overlay { 
+                display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); 
+                z-index: 1040; backdrop-filter: blur(2px);
+            }
             .sidebar.active ~ .sidebar-overlay { display: block; }
-            .main-content { padding: 10px; }
+
+            /* Main Content Adjustments */
+            .main-content { padding: 10px; width: 100%; height: calc(100vh - 50px); }
+            #calendar-card { border-radius: 8px; }
+
+            /* FullCalendar Mobile Toolbar */
+            .fc-header-toolbar { flex-wrap: wrap; gap: 5px; margin-bottom: 10px !important; }
+            .fc-toolbar-chunk { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+            .fc-toolbar-chunk:nth-child(2) { justify-content: center; font-size: 0.9rem; } /* Titolo */
+            .fc-button { padding: 4px 8px !important; font-size: 0.8rem !important; }
+
+            /* Modali Full Width su Mobile */
+            .modal-dialog { margin: 10px; max-width: 100%; }
+            
+            /* CRM Mobile Layout (Impilato invece che affiancato) */
+            .crm-row { flex-direction: column; }
+            .crm-list-col { width: 100% !important; border-right: none !important; border-bottom: 1px solid #eee; height: 35vh !important; }
+            .crm-detail-col { width: 100% !important; height: 50vh !important; }
         }
+
+        /* Helpers per CRM layout */
+        .crm-row { display: flex; height: 100%; }
+        .crm-list-col { width: 35%; border-right: 1px solid #eee; background: #f8f9fa; overflow-y: auto; padding: 15px; }
+        .crm-detail-col { width: 65%; display: flex; flex-direction: column; background: white; overflow-y: auto; padding: 0; }
+        .file-card { border: 1px solid #e5e7eb; padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+
     </style>
 </head>
 <body>
 
-    <!-- Overlay Mobile -->
+    <!-- Header Mobile (Solo su telefono) -->
+    <div class="mobile-header">
+        <div class="mobile-brand"><i class="bi bi-shield-check"></i> PT System</div>
+        <button class="btn btn-outline-secondary btn-sm" onclick="toggleSidebar()"><i class="bi bi-list fs-4"></i></button>
+    </div>
+
+    <!-- Overlay scuro quando apri il menu su mobile -->
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
-    <button class="mobile-toggle" onclick="toggleSidebar()"><i class="bi bi-list"></i></button>
 
     <div class="wrapper">
         <!-- SIDEBAR -->
         <nav class="sidebar">
-            <div class="brand"><i class="bi bi-shield-check"></i> PT System</div>
+            <div class="brand d-none d-lg-flex"><i class="bi bi-shield-check"></i> PT System</div>
+            <div class="d-flex justify-content-between align-items-center mb-3 d-lg-none">
+                <span class="fw-bold">Menu</span>
+                <button class="btn-close" onclick="toggleSidebar()"></button>
+            </div>
             
             <button class="nav-btn primary" onclick="openEventModal()"><i class="bi bi-plus-lg"></i> Nuova Lezione</button>
             
             <div class="mt-4 mb-2 small text-muted fw-bold text-uppercase">Gestione</div>
-            <!-- Ora questi tasti funzioneranno -->
             <button class="nav-btn" onclick="openClientManager()"><i class="bi bi-person-rolodex"></i> Clienti & Dossier</button>
             <button class="nav-btn" onclick="openPackageManager()"><i class="bi bi-box-seam"></i> Configura Pacchetti</button>
 
@@ -177,7 +214,7 @@
                         <!-- Tipo -->
                         <div class="btn-group w-100 mb-3" role="group">
                             <input type="radio" class="btn-check" name="eventType" id="t_lesson" value="lesson" checked onclick="toggleFields()">
-                            <label class="btn btn-outline-primary" for="t_lesson"><i class="bi bi-person"></i> Lezione</label>
+                            <label class="btn btn-outline-primary" for="t_lesson"><i class="bi bi-person"></i> Lez.</label>
                             
                             <input type="radio" class="btn-check" name="eventType" id="t_shift" value="shift" onclick="toggleFields()">
                             <label class="btn btn-outline-success" for="t_shift"><i class="bi bi-clock"></i> Turno</label>
@@ -202,7 +239,7 @@
                             <!-- Alert Pacchetto -->
                             <div id="packageAlertBox" class="alert alert-info d-none p-2 mb-3">
                                 <div class="d-flex align-items-center justify-content-between">
-                                    <span class="small"><i class="bi bi-box"></i> <strong>Pacchetto Attivo</strong></span>
+                                    <span class="small"><i class="bi bi-box"></i> <strong>Pacchetto</strong></span>
                                     <span class="badge bg-primary" id="packProgressBadge">0/0</span>
                                 </div>
                                 <div class="form-check mt-1">
@@ -210,7 +247,7 @@
                                     <label class="form-check-label small" for="usePackageCheck">Conta come lez. <span id="nextLessonNum" class="fw-bold"></span></label>
                                 </div>
                                 <div id="paymentTriggerMsg" class="mt-2 text-danger fw-bold small d-none border-top pt-1 border-danger">
-                                    <i class="bi bi-exclamation-triangle-fill"></i> RATA IN SCADENZA: €<span id="triggerAmount"></span>
+                                    <i class="bi bi-exclamation-triangle-fill"></i> SCADENZA RATA: €<span id="triggerAmount"></span>
                                 </div>
                             </div>
 
@@ -243,7 +280,7 @@
         </div>
     </div>
 
-    <!-- MODAL DOSSIER CLIENTI -->
+    <!-- MODAL DOSSIER CLIENTI (Responsive) -->
     <div class="modal fade" id="clientModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content h-100" style="min-height: 80vh;">
@@ -252,22 +289,22 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-0">
-                    <div class="row g-0 h-100">
-                        <!-- Lista (SX) -->
-                        <div class="col-md-4 border-end bg-light p-3" style="max-height:80vh; overflow-y:auto;">
+                    <div class="crm-row">
+                        <!-- Lista (SX) / Top (Mobile) -->
+                        <div class="crm-list-col">
                             <button class="btn btn-primary w-100 mb-3" onclick="showNewClientForm()"><i class="bi bi-person-plus"></i> Nuovo Cliente</button>
                             <div id="clientsList" class="d-grid gap-2"></div>
                         </div>
-                        <!-- Dettagli (DX) -->
-                        <div class="col-md-8 p-0 d-flex flex-column" style="height:80vh;">
-                            <div class="bg-white border-bottom px-3 pt-2">
+                        <!-- Dettagli (DX) / Bottom (Mobile) -->
+                        <div class="crm-detail-col">
+                            <div class="bg-white border-bottom px-3 pt-2 sticky-top">
                                 <ul class="nav nav-tabs" id="clientTabs">
                                     <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tabInfo">Profilo</a></li>
                                     <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tabMedia">Files</a></li>
                                     <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tabPack">Pacchetti</a></li>
                                 </ul>
                             </div>
-                            <div class="tab-content p-4 flex-grow-1 overflow-auto" id="clientTabContent">
+                            <div class="tab-content p-4 flex-grow-1" id="clientTabContent">
                                 <div class="text-center text-muted mt-5">Seleziona un cliente</div>
                             </div>
                         </div>
@@ -281,7 +318,7 @@
     <div class="modal fade" id="packageConfigModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header"><h5 class="modal-title fw-bold">Nuovo Modello Pacchetto</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-header"><h5 class="modal-title fw-bold">Nuovo Pacchetto</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
                     <div class="mb-3"><label>Nome (es. 10 Lezioni)</label><input type="text" class="form-control" id="pkgName"></div>
                     <div class="row g-2 mb-3">
@@ -291,10 +328,10 @@
                     <hr>
                     <label class="fw-bold mb-2">Rate Pagamento</label>
                     <div id="installmentsContainer"></div>
-                    <button class="btn btn-sm btn-outline-secondary mt-2" onclick="addInstallmentRow()"><i class="bi bi-plus"></i> Aggiungi Rata</button>
+                    <button class="btn btn-sm btn-outline-secondary mt-2 w-100" onclick="addInstallmentRow()"><i class="bi bi-plus"></i> Aggiungi Rata</button>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" onclick="savePackageTemplate()">Salva Modello</button>
+                    <button class="btn btn-primary w-100" onclick="savePackageTemplate()">Salva Modello</button>
                 </div>
             </div>
         </div>
@@ -327,7 +364,7 @@
         let packageTemplates = [];
         let tempInstallments = [{at: 1, amount: 0}];
 
-        // ASSICURIAMO CHE LE FUNZIONI SIANO GLOBALI PER L'HTML
+        // ESPOSIZIONE FUNZIONI GLOBALI (Importante)
         window.openClientManager = () => { renderClientListSide(); new bootstrap.Modal(document.getElementById('clientModal')).show(); };
         window.openPackageManager = () => { new bootstrap.Modal(document.getElementById('packageConfigModal')).show(); renderInstallmentRows(); };
         window.openEventModal = (date, event) => openEventModalInternal(date, event);
@@ -346,40 +383,44 @@
 
         function initCalendar() {
             const el = document.getElementById('calendar');
+            // Logica Responsive per il calendario
             const isMobile = window.innerWidth < 991;
+            
             calendar = new FullCalendar.Calendar(el, {
+                // Su mobile usa "timeGridThreeDay" (definita sotto) o "timeGridDay" per non schiacciare
                 initialView: isMobile ? 'timeGridThreeDay' : 'timeGridWeek',
-                views: { timeGridThreeDay: { type: 'timeGrid', duration: { days: 3 }, buttonText: '3gg' } },
+                views: {
+                    timeGridThreeDay: { type: 'timeGrid', duration: { days: 3 }, buttonText: '3gg' }
+                },
                 locale: 'it', firstDay: 1, height: '100%',
-                headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,listWeek' },
+                // Header semplificato su mobile
+                headerToolbar: { 
+                    left: 'prev,next', 
+                    center: 'title', 
+                    right: isMobile ? 'timeGridThreeDay,listWeek' : 'dayGridMonth,timeGridWeek' 
+                },
                 slotMinTime: "06:00:00", slotMaxTime: "23:00:00", allDaySlot: false,
                 dateClick: (info) => window.openEventModal(info.date),
                 eventClick: (info) => window.openEventModal(null, info.event),
                 
-                // --- QUI SISTEMIAMO LE ICONE E IL TESTO ---
                 eventContent: (arg) => {
                     const p = arg.event.extendedProps;
-                    let iconHtml = '';
-                    let badgeHtml = '';
-
-                    // Icona in base al tipo
+                    let iconHtml = ''; let badgeHtml = '';
                     if(p.type === 'lesson') iconHtml = '<i class="bi bi-person-fill me-1"></i>';
                     else if(p.type === 'shift') iconHtml = '<i class="bi bi-clock-fill me-1"></i>';
                     else iconHtml = '<i class="bi bi-pin-fill me-1"></i>';
 
-                    // Pallino pagamento
                     if(p.type === 'lesson') {
                         if(p.paymentStatus === 'paid') badgeHtml = '<span class="pay-badge pay-ok"></span>';
                         else if (p.paymentAlert || p.paymentStatus === 'pending') badgeHtml = '<span class="pay-badge pay-pending"></span>';
                     }
-
-                    return { html: `<div class="d-flex align-items-center" style="line-height:1.2;">${badgeHtml} ${iconHtml} <span class="text-truncate">${arg.event.title}</span></div>` }
+                    return { html: `<div class="d-flex align-items-center text-truncate" style="line-height:1.2;">${badgeHtml} ${iconHtml} <span class="fw-bold">${arg.event.title}</span></div>` }
                 }
             });
             calendar.render();
         }
 
-        // --- DATA LOADERS ---
+        // --- FIREBASE LOGIC (Resto uguale alla versione desktop) ---
         async function loadClients() {
             const snap = await getDocs(query(collection(db, "clients"), orderBy("name")));
             allClients = snap.docs.map(d => ({id: d.id, ...d.data()}));
@@ -424,7 +465,6 @@
             showLoader(false);
         }
 
-        // --- CLIENT MANAGER ---
         window.renderClientListSide = function() {
             const div = document.getElementById('clientsList');
             div.innerHTML = '';
@@ -443,7 +483,7 @@
                 <div class="mb-3"><label>Nome</label><input type="text" id="newCName" class="form-control"></div>
                 <div class="mb-3"><label>Telefono</label><input type="text" id="newCPhone" class="form-control"></div>
                 <div class="mb-3"><label>Note</label><textarea id="newCNotes" class="form-control"></textarea></div>
-                <button class="btn btn-success" onclick="saveNewClient()">Crea</button>
+                <button class="btn btn-success w-100" onclick="saveNewClient()">Crea</button>
             `;
         }
 
@@ -459,14 +499,12 @@
         }
 
         window.loadClientDetails = async function(client) {
-            // Tab Info
             const tabInfo = `
                 <div class="tab-pane fade show active" id="tabInfo">
                     <h3>${client.name}</h3>
-                    <textarea class="form-control mt-3" rows="8" id="cNotes" onblur="updateClientNote('${client.id}')">${client.notes||''}</textarea>
+                    <textarea class="form-control mt-3" rows="6" id="cNotes" onblur="updateClientNote('${client.id}')">${client.notes||''}</textarea>
                 </div>`;
             
-            // Tab Files (Semplificato)
             const tabMedia = `
                 <div class="tab-pane fade" id="tabMedia">
                     <input type="file" id="upFile" class="form-control mb-2">
@@ -474,20 +512,19 @@
                     <div id="fileBox">Caricamento...</div>
                 </div>`;
 
-            // Tab Pack
             let packHtml = `<div class="tab-pane fade" id="tabPack">`;
             if(client.activePackage) {
                 const p = client.activePackage;
                 packHtml += `<div class="alert alert-primary">
-                    <strong>${p.name}</strong><br>Lezioni: ${p.currentCount}/${p.total}
-                    <button class="btn btn-sm btn-danger d-block mt-2" onclick="removePack('${client.id}')">Rimuovi</button>
+                    <strong>${p.name}</strong><br>Lez: ${p.currentCount}/${p.total}
+                    <button class="btn btn-sm btn-danger d-block mt-2 w-100" onclick="removePack('${client.id}')">Rimuovi</button>
                 </div>`;
             } else {
                 packHtml += `<select class="form-select mb-2" id="selPack">
-                    <option value="">Seleziona Pack...</option>
+                    <option value="">Seleziona...</option>
                     ${packageTemplates.map(t=>`<option value="${t.id}">${t.name} (€${t.price})</option>`).join('')}
                 </select>
-                <button class="btn btn-primary" onclick="assignPack('${client.id}')">Attiva</button>`;
+                <button class="btn btn-primary w-100" onclick="assignPack('${client.id}')">Attiva</button>`;
             }
             packHtml += `</div>`;
 
@@ -495,7 +532,6 @@
             loadCFiles(client.id);
         }
 
-        // Helper funzioni cliente (Globali per onclick)
         window.updateClientNote = async (cid) => await updateDoc(doc(db,"clients",cid), {notes: document.getElementById('cNotes').value});
         
         window.assignPack = async (cid) => {
@@ -505,22 +541,18 @@
             await updateDoc(doc(db,"clients",cid), {
                 activePackage: { templateId: pid, name: t.name, total: t.totalSessions, currentCount: 0, installments: t.installments }
             });
-            // Reload semplice
-            loadClientDetails(allClients.find(c=>c.id===cid)); // Nota: allClients va ricaricato per vedere modifica reale, qui è trick visivo
-            await loadClients(); // Reload vero
+            loadClientDetails(allClients.find(c=>c.id===cid)); await loadClients();
         }
         
         window.removePack = async (cid) => {
             if(!confirm("Sicuro?")) return;
             await updateDoc(doc(db,"clients",cid), { activePackage: null });
-            await loadClients();
-            document.getElementById('clientTabContent').innerHTML = "Pacchetto rimosso. Seleziona di nuovo il cliente.";
+            await loadClients(); document.getElementById('clientTabContent').innerHTML = "Rimosso.";
         }
 
-        // --- FILES ---
         window.uploadCFile = async (cid) => {
             const f = document.getElementById('upFile').files[0];
-            if(!f || f.size>800000) return alert("File max 800KB");
+            if(!f || f.size>800000) return alert("Max 800KB");
             const r = new FileReader();
             r.onload = async (e) => {
                 await addDoc(collection(db,`clients/${cid}/files`), {name:f.name, data:e.target.result});
@@ -544,7 +576,6 @@
             loadCFiles(cid);
         }
 
-        // --- PACKAGES ---
         window.renderInstallmentRows = function() {
             const c = document.getElementById('installmentsContainer');
             c.innerHTML = '';
@@ -570,7 +601,6 @@
             location.reload();
         }
 
-        // --- EVENTS ---
         window.toggleFields = function() {
             const t = document.querySelector('input[name="eventType"]:checked').value;
             document.getElementById('lessonFields').classList.toggle('d-none', t !== 'lesson');
@@ -651,7 +681,6 @@
                 data.price = document.getElementById('manualPrice').value;
                 data.paymentStatus = document.getElementById('isPaidCheck').checked ? 'paid' : 'pending';
 
-                // Update Pack Logic (Solo se nuovo evento)
                 if(!id && document.getElementById('usePackageCheck').checked && c.activePackage) {
                     const next = c.activePackage.currentCount + 1;
                     const trigger = c.activePackage.installments.find(i=>i.at===next);
