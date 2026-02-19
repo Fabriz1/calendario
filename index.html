@@ -1,688 +1,194 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PT Pro System - Gestionale</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PT Pro Dark</title>
     
-    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-    
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- FullCalendar -->
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/locales/it.global.min.js'></script>
-
-    <!-- Bootstrap Bundle JS (IMPORTANTE PER I MODAL) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-    <style>
-        :root {
-            --bg-body: #f8f9fa;
-            --bg-sidebar: #ffffff;
-            --text-main: #111827; 
-            --accent: #4f46e5;
-            
-            /* Colori Eventi ad Alto Contrasto */
-            --evt-lesson-bg: #e0e7ff;
-            --evt-lesson-border: #4f46e5;
-            --evt-lesson-text: #1e1b4b; /* Blu scurissimo */
-
-            --evt-shift-bg: #dcfce7;
-            --evt-shift-border: #16a34a;
-            --evt-shift-text: #14532d; /* Verde scurissimo */
-
-            --evt-task-bg: #fef9c3;
-            --evt-task-border: #ca8a04;
-            --evt-task-text: #713f12; /* Marrone scurissimo */
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            overflow: hidden;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .wrapper { display: flex; height: 100vh; }
-
-        /* SIDEBAR */
-        .sidebar {
-            width: 280px;
-            background: var(--bg-sidebar);
-            padding: 20px;
-            display: flex; flex-direction: column;
-            border-right: 1px solid #e5e7eb;
-            z-index: 20;
-            overflow-y: auto;
-        }
-        .brand { font-size: 1.4rem; font-weight: 800; color: var(--accent); margin-bottom: 30px; display: flex; align-items: center; gap: 10px; }
-        
-        .nav-btn {
-            background: transparent; border: 1px solid #e5e7eb; color: var(--text-main);
-            padding: 12px; border-radius: 8px; font-weight: 600; width: 100%; text-align: left;
-            margin-bottom: 10px; transition: 0.2s; display: flex; align-items: center; gap: 10px; cursor: pointer;
-        }
-        .nav-btn:hover { background: #f3f4f6; border-color: #d1d5db; }
-        .nav-btn.primary { background: var(--accent); color: white; border: none; text-align: center; justify-content: center; }
-        .nav-btn.primary:hover { background: #4338ca; }
-
-        /* MAIN CALENDAR */
-        .main-content { flex: 1; padding: 20px; position: relative; overflow: hidden; }
-        #calendar-card { background: white; border-radius: 12px; height: 100%; padding: 15px; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-
-        /* FULLCALENDAR FIXES */
-        .fc-theme-standard td, .fc-theme-standard th { border-color: #f1f1f1; }
-        
-        /* Bottoni Header (Mese, Settimana...) */
-        .fc-button-primary { 
-            background-color: white !important; 
-            color: #333 !important; 
-            border: 1px solid #e5e7eb !important; 
-            font-weight: 600; 
-            text-transform: capitalize;
-        }
-        /* Stato Attivo (Cliccato) */
-        .fc-button-active { 
-            background-color: #374151 !important; /* Grigio scuro */
-            color: white !important; 
-            border-color: #374151 !important;
-            box-shadow: none !important;
-        }
-        
-        /* EVENTI */
-        .fc-event { border: none !important; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-radius: 4px; padding: 1px 2px; }
-        
-        /* CLASSI COLORI (con !important per sovrascrivere tutto) */
-        .evt-lesson { background-color: var(--evt-lesson-bg) !important; border-left: 4px solid var(--evt-lesson-border) !important; }
-        .evt-lesson div, .evt-lesson span, .evt-lesson i { color: var(--evt-lesson-text) !important; font-weight: 700 !important; }
-
-        .evt-shift { background-color: var(--evt-shift-bg) !important; border-left: 4px solid var(--evt-shift-border) !important; }
-        .evt-shift div, .evt-shift span, .evt-shift i { color: var(--evt-shift-text) !important; font-weight: 700 !important; }
-
-        .evt-task { background-color: var(--evt-task-bg) !important; border-left: 4px solid var(--evt-task-border) !important; }
-        .evt-task div, .evt-task span, .evt-task i { color: var(--evt-task-text) !important; font-weight: 700 !important; }
-
-        /* Badge Pagamento */
-        .pay-badge { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 5px; border: 1px solid rgba(0,0,0,0.1); }
-        .pay-pending { background: #dc2626; box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2); }
-        .pay-ok { background: #16a34a; }
-
-        /* MODALI */
-        .modal-content { border-radius: 12px; border: none; }
-        .nav-tabs .nav-link.active { color: var(--accent); border-bottom: 2px solid var(--accent); font-weight: bold; }
-        .file-card { border: 1px solid #e5e7eb; padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
-        
-        /* MOBILE */
-        .mobile-toggle { display: none; position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px; background: var(--accent); color: white; border-radius: 50%; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 100; font-size: 1.5rem; }
-        @media (max-width: 991px) {
-            .mobile-toggle { display: block; }
-            .sidebar { position: fixed; left: -100%; top: 0; height: 100vh; width: 85%; max-width: 320px; transition: 0.3s; z-index: 1050; box-shadow: 10px 0 20px rgba(0,0,0,0.1); }
-            .sidebar.active { left: 0; }
-            .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1040; }
-            .sidebar.active ~ .sidebar-overlay { display: block; }
-            .main-content { padding: 10px; }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Overlay Mobile -->
-    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
-    <button class="mobile-toggle" onclick="toggleSidebar()"><i class="bi bi-list"></i></button>
+    <div id="app">
+        
+        <!-- HEADER -->
+        <header class="app-header">
+            <h1 id="page-title">Calendario</h1>
+            <div id="header-actions"></div>
+        </header>
 
-    <div class="wrapper">
-        <!-- SIDEBAR -->
-        <nav class="sidebar">
-            <div class="brand"><i class="bi bi-shield-check"></i> PT System</div>
-            
-            <button class="nav-btn primary" onclick="openEventModal()"><i class="bi bi-plus-lg"></i> Nuova Lezione</button>
-            
-            <div class="mt-4 mb-2 small text-muted fw-bold text-uppercase">Gestione</div>
-            <!-- Ora questi tasti funzioneranno -->
-            <button class="nav-btn" onclick="openClientManager()"><i class="bi bi-person-rolodex"></i> Clienti & Dossier</button>
-            <button class="nav-btn" onclick="openPackageManager()"><i class="bi bi-box-seam"></i> Configura Pacchetti</button>
+        <!-- CALENDAR -->
+        <section id="view-calendar" class="view-section active">
+            <div id="calendar-wrapper"></div>
+        </section>
 
-            <div class="mt-auto border-top pt-3">
-                <div class="small text-muted mb-1">Stima Incassi (Mese)</div>
-                <div class="fs-4 fw-bold text-dark" id="monthlyRevenue">€0</div>
+        <!-- CLIENTS -->
+        <section id="view-clients" class="view-section" style="display:none;">
+            <div class="p-3 bg-dark sticky-top" style="top: 60px; z-index:100;">
+                <input type="text" id="clientSearch" class="form-control" placeholder="Cerca cliente...">
             </div>
-        </nav>
+            <div id="clients-list" class="list-group list-group-flush"></div>
+        </section>
 
-        <!-- MAIN -->
-        <main class="main-content">
-            <div id="calendar-card">
-                <div id="calendar"></div>
+        <!-- DOSSIER -->
+        <section id="view-dossier" class="view-section" style="display:none;">
+            <div class="p-3 border-bottom border-secondary d-flex justify-content-between align-items-center bg-dark sticky-top" style="top: 60px; z-index:100;">
+                <button class="btn btn-sm btn-outline-light" onclick="showView('clients')"><i class="bi bi-arrow-left"></i> Indietro</button>
+                <span class="fw-bold" id="dossierTitle">Cliente</span>
+                <div style="width: 70px;"></div> <!-- Spacer -->
             </div>
-        </main>
+            <div id="dossier-content" class="container-fluid py-3 pb-5"></div>
+        </section>
+
     </div>
+
+    <!-- NAVBAR -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="showView('calendar')"><i class="bi bi-calendar-week"></i><span>Agenda</span></button>
+        <button class="nav-item" onclick="showView('clients')"><i class="bi bi-people"></i><span>Clienti</span></button>
+        <button class="nav-item fab-btn" onclick="openEventModal()"><i class="bi bi-plus-lg"></i></button>
+    </nav>
 
     <!-- MODAL EVENTO -->
     <div class="modal fade" id="eventModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header bg-light">
-                    <h5 class="modal-title fw-bold">Gestisci Evento</h5>
+                <div class="modal-header">
+                    <h5 class="modal-title">Gestisci Evento</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="eventForm">
-                        <input type="hidden" id="eventId">
+                        <input type="hidden" id="evtId">
                         
-                        <!-- Tipo -->
-                        <div class="btn-group w-100 mb-3" role="group">
-                            <input type="radio" class="btn-check" name="eventType" id="t_lesson" value="lesson" checked onclick="toggleFields()">
-                            <label class="btn btn-outline-primary" for="t_lesson"><i class="bi bi-person"></i> Lezione</label>
-                            
-                            <input type="radio" class="btn-check" name="eventType" id="t_shift" value="shift" onclick="toggleFields()">
-                            <label class="btn btn-outline-success" for="t_shift"><i class="bi bi-clock"></i> Turno</label>
-                            
-                            <input type="radio" class="btn-check" name="eventType" id="t_task" value="task" onclick="toggleFields()">
-                            <label class="btn btn-outline-warning" for="t_task"><i class="bi bi-pin"></i> Note</label>
+                        <div class="btn-group w-100 mb-4" role="group">
+                            <input type="radio" class="btn-check" name="evtType" id="type_lesson" value="lesson" checked onchange="toggleEventFields()">
+                            <label class="btn btn-outline-primary" for="type_lesson">Lezione</label>
+                            <input type="radio" class="btn-check" name="evtType" id="type_shift" value="shift" onchange="toggleEventFields()">
+                            <label class="btn btn-outline-success" for="type_shift">Turno</label>
+                            <input type="radio" class="btn-check" name="evtType" id="type_task" value="task" onchange="toggleEventFields()">
+                            <label class="btn btn-outline-warning" for="type_task">Note</label>
                         </div>
 
-                        <!-- Orari -->
                         <div class="row g-2 mb-3">
-                            <div class="col-6"><label class="small fw-bold">Inizio</label><input type="datetime-local" class="form-control" id="startInput"></div>
-                            <div class="col-6"><label class="small fw-bold">Fine</label><input type="datetime-local" class="form-control" id="endInput"></div>
+                            <div class="col-7"><label class="small text-muted">Data</label><input type="date" class="form-control" id="evtDate" required></div>
+                            <div class="col-5"><label class="small text-muted">Ora Inizio</label><input type="time" class="form-control" id="evtTime" required></div>
                         </div>
 
-                        <!-- Campi Lezione -->
-                        <div id="lessonFields">
-                            <label class="form-label fw-bold">Cliente</label>
-                            <select class="form-select mb-3" id="clientSelect" onchange="checkPackageStatus()">
-                                <option value="">-- Seleziona --</option>
+                        <div class="mb-3">
+                            <label class="small text-muted">Durata (minuti)</label>
+                            <select class="form-select" id="evtDuration">
+                                <option value="30">30 min</option>
+                                <option value="60" selected>60 min (1 ora)</option>
+                                <option value="90">90 min (1.5 ore)</option>
+                                <option value="120">120 min (2 ore)</option>
+                                <option value="240">4 ore (Mezza giornata)</option>
+                                <option value="480">8 ore (Giornata intera)</option>
                             </select>
+                        </div>
 
-                            <!-- Alert Pacchetto -->
-                            <div id="packageAlertBox" class="alert alert-info d-none p-2 mb-3">
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <span class="small"><i class="bi bi-box"></i> <strong>Pacchetto Attivo</strong></span>
-                                    <span class="badge bg-primary" id="packProgressBadge">0/0</span>
-                                </div>
-                                <div class="form-check mt-1">
-                                    <input class="form-check-input" type="checkbox" id="usePackageCheck" checked>
-                                    <label class="form-check-label small" for="usePackageCheck">Conta come lez. <span id="nextLessonNum" class="fw-bold"></span></label>
-                                </div>
-                                <div id="paymentTriggerMsg" class="mt-2 text-danger fw-bold small d-none border-top pt-1 border-danger">
-                                    <i class="bi bi-exclamation-triangle-fill"></i> RATA IN SCADENZA: €<span id="triggerAmount"></span>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="small fw-bold">Note Lezione</label>
-                                <textarea class="form-control" id="notes" rows="2"></textarea>
-                            </div>
-
-                            <div class="d-flex gap-2 align-items-center">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="isPaidCheck">
-                                    <label class="form-check-label small fw-bold" for="isPaidCheck">Pagato</label>
-                                </div>
-                                <input type="number" class="form-control form-control-sm" id="manualPrice" placeholder="€ Prezzo" style="width: 100px;">
+                        <div id="field-client" class="mb-3">
+                            <label class="small text-muted">Cliente</label>
+                            <select class="form-select" id="evtClient" onchange="checkClientPackageStatus()">
+                                <option value="">Seleziona...</option>
+                            </select>
+                            <div id="package-hint" class="alert alert-info mt-2 p-2 d-none small bg-dark border-info text-info">
+                                <i class="bi bi-box-seam"></i> Scalerà dal pacchetto (<span id="pkg-rem"></span> rimaste)
                             </div>
                         </div>
 
-                        <!-- Campi Generici -->
-                        <div id="genericFields" class="d-none">
-                            <label>Titolo / Descrizione</label>
-                            <input type="text" class="form-control" id="genericTitle">
+                        <div id="field-title" class="mb-3 d-none">
+                            <label class="small text-muted">Titolo</label>
+                            <input type="text" class="form-control" id="evtTitle">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="small text-muted">Note</label>
+                            <textarea class="form-control" id="evtNotes" rows="2"></textarea>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger me-auto" id="btnDelete" onclick="deleteEvent()" style="display:none;">Elimina</button>
-                    <button type="button" class="btn btn-dark w-50" onclick="saveEvent()">Salva</button>
+                    <button type="button" class="btn btn-danger me-auto d-none" id="btnDeleteEvent" onclick="deleteEvent()">Elimina</button>
+                    <button type="button" class="btn btn-primary w-50" onclick="saveEvent()">Salva</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL DOSSIER CLIENTI -->
-    <div class="modal fade" id="clientModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-xl">
-            <div class="modal-content h-100" style="min-height: 80vh;">
-                <div class="modal-header">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-person-badge"></i> Dossier Clienti</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-0">
-                    <div class="row g-0 h-100">
-                        <!-- Lista (SX) -->
-                        <div class="col-md-4 border-end bg-light p-3" style="max-height:80vh; overflow-y:auto;">
-                            <button class="btn btn-primary w-100 mb-3" onclick="showNewClientForm()"><i class="bi bi-person-plus"></i> Nuovo Cliente</button>
-                            <div id="clientsList" class="d-grid gap-2"></div>
-                        </div>
-                        <!-- Dettagli (DX) -->
-                        <div class="col-md-8 p-0 d-flex flex-column" style="height:80vh;">
-                            <div class="bg-white border-bottom px-3 pt-2">
-                                <ul class="nav nav-tabs" id="clientTabs">
-                                    <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tabInfo">Profilo</a></li>
-                                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tabMedia">Files</a></li>
-                                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tabPack">Pacchetti</a></li>
-                                </ul>
-                            </div>
-                            <div class="tab-content p-4 flex-grow-1 overflow-auto" id="clientTabContent">
-                                <div class="text-center text-muted mt-5">Seleziona un cliente</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL CONFIGURA PACCHETTI -->
-    <div class="modal fade" id="packageConfigModal" tabindex="-1">
-        <div class="modal-dialog">
+    <!-- MODAL NUOVO CLIENTE -->
+    <div class="modal fade" id="newClientModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header"><h5 class="modal-title fw-bold">Nuovo Modello Pacchetto</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-header"><h5 class="modal-title">Nuovo Cliente</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
-                    <div class="mb-3"><label>Nome (es. 10 Lezioni)</label><input type="text" class="form-control" id="pkgName"></div>
-                    <div class="row g-2 mb-3">
-                        <div class="col-6"><label>N° Lezioni</label><input type="number" class="form-control" id="pkgCount"></div>
-                        <div class="col-6"><label>Totale €</label><input type="number" class="form-control" id="pkgPrice"></div>
-                    </div>
-                    <hr>
-                    <label class="fw-bold mb-2">Rate Pagamento</label>
-                    <div id="installmentsContainer"></div>
-                    <button class="btn btn-sm btn-outline-secondary mt-2" onclick="addInstallmentRow()"><i class="bi bi-plus"></i> Aggiungi Rata</button>
+                    <div class="mb-3"><label>Nome</label><input type="text" id="ncName" class="form-control"></div>
+                    <div class="mb-3"><label>Telefono</label><input type="tel" id="ncPhone" class="form-control"></div>
+                    <div class="mb-3"><label>Note</label><textarea id="ncNotes" class="form-control"></textarea></div>
                 </div>
-                <div class="modal-footer">
-                    <button class="btn btn-primary" onclick="savePackageTemplate()">Salva Modello</button>
+                <div class="modal-footer"><button class="btn btn-primary w-100" onclick="createClient()">Crea</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL VENDITA -->
+    <div class="modal fade" id="addPackageModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title">Vendi Pacchetto</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <input type="hidden" id="pkgClientId">
+                    <div class="mb-3"><label>Nome Pacchetto</label><input type="text" class="form-control" id="pkgName" placeholder="Es. 10 Lezioni"></div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6"><label>N° Lezioni</label><input type="number" class="form-control" id="pkgSessions" value="10"></div>
+                        <div class="col-6"><label>Totale €</label><input type="number" class="form-control" id="pkgPrice" value="0"></div>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="pkgPaidNow">
+                        <label class="form-check-label" for="pkgPaidNow">Pagato subito?</label>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn btn-success w-100" onclick="confirmPackageSale()">Conferma</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PAGAMENTO -->
+    <div class="modal fade" id="addPaymentModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title">Registra Incasso</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <input type="hidden" id="payClientId">
+                    <div class="mb-3"><label>Importo (€)</label><input type="number" id="payAmount" class="form-control form-control-lg fw-bold text-center"></div>
+                    <div class="mb-3"><label>Causale</label><input type="text" id="payNote" class="form-control" placeholder="Es. Acconto"></div>
+                </div>
+                <div class="modal-footer"><button class="btn btn-success w-100" onclick="confirmPayment()">Salva</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL STORICO BILANCIO -->
+    <div class="modal fade" id="historyModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title">Storico e Modifiche</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <input type="hidden" id="histClientId">
+                    <div class="alert alert-secondary small"><i class="bi bi-info-circle"></i> Elimina una riga per annullare la transazione e ricalcolare il saldo.</div>
+                    <div id="history-list" class="d-flex flex-column gap-2"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- LOADER -->
-    <div id="loader" style="display:none; position: fixed; inset:0; background:rgba(255,255,255,0.9); z-index:9999; justify-content:center; align-items:center; flex-direction:column;">
-        <div class="spinner-border text-primary" role="status"></div>
-    </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDuYQqNPgdQ6e5sO7hzMnrrmzg7cBmHusA",
-            authDomain: "calendario-79a93.firebaseapp.com",
-            projectId: "calendario-79a93",
-            storageBucket: "calendario-79a93.appspot.com",
-            messagingSenderId: "981317951328",
-            appId: "1:981317951328:web:38b9b95bfe654b4904c805"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // GLOBALS
-        let calendar;
-        let allClients = [];
-        let packageTemplates = [];
-        let tempInstallments = [{at: 1, amount: 0}];
-
-        // ASSICURIAMO CHE LE FUNZIONI SIANO GLOBALI PER L'HTML
-        window.openClientManager = () => { renderClientListSide(); new bootstrap.Modal(document.getElementById('clientModal')).show(); };
-        window.openPackageManager = () => { new bootstrap.Modal(document.getElementById('packageConfigModal')).show(); renderInstallmentRows(); };
-        window.openEventModal = (date, event) => openEventModalInternal(date, event);
-        window.saveEvent = () => saveEventInternal();
-        window.deleteEvent = () => deleteEventInternal();
-        window.savePackageTemplate = () => savePackageTemplateInternal();
-        window.saveNewClient = () => saveNewClientInternal();
-        window.toggleSidebar = () => document.querySelector('.sidebar').classList.toggle('active');
-
-        document.addEventListener('DOMContentLoaded', async () => {
-            initCalendar();
-            await loadClients();
-            await loadPackageTemplates();
-            await loadEvents();
-        });
-
-        function initCalendar() {
-            const el = document.getElementById('calendar');
-            const isMobile = window.innerWidth < 991;
-            calendar = new FullCalendar.Calendar(el, {
-                initialView: isMobile ? 'timeGridThreeDay' : 'timeGridWeek',
-                views: { timeGridThreeDay: { type: 'timeGrid', duration: { days: 3 }, buttonText: '3gg' } },
-                locale: 'it', firstDay: 1, height: '100%',
-                headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,listWeek' },
-                slotMinTime: "06:00:00", slotMaxTime: "23:00:00", allDaySlot: false,
-                dateClick: (info) => window.openEventModal(info.date),
-                eventClick: (info) => window.openEventModal(null, info.event),
-                
-                // --- QUI SISTEMIAMO LE ICONE E IL TESTO ---
-                eventContent: (arg) => {
-                    const p = arg.event.extendedProps;
-                    let iconHtml = '';
-                    let badgeHtml = '';
-
-                    // Icona in base al tipo
-                    if(p.type === 'lesson') iconHtml = '<i class="bi bi-person-fill me-1"></i>';
-                    else if(p.type === 'shift') iconHtml = '<i class="bi bi-clock-fill me-1"></i>';
-                    else iconHtml = '<i class="bi bi-pin-fill me-1"></i>';
-
-                    // Pallino pagamento
-                    if(p.type === 'lesson') {
-                        if(p.paymentStatus === 'paid') badgeHtml = '<span class="pay-badge pay-ok"></span>';
-                        else if (p.paymentAlert || p.paymentStatus === 'pending') badgeHtml = '<span class="pay-badge pay-pending"></span>';
-                    }
-
-                    return { html: `<div class="d-flex align-items-center" style="line-height:1.2;">${badgeHtml} ${iconHtml} <span class="text-truncate">${arg.event.title}</span></div>` }
-                }
-            });
-            calendar.render();
-        }
-
-        // --- DATA LOADERS ---
-        async function loadClients() {
-            const snap = await getDocs(query(collection(db, "clients"), orderBy("name")));
-            allClients = snap.docs.map(d => ({id: d.id, ...d.data()}));
-            const sel = document.getElementById('clientSelect');
-            sel.innerHTML = '<option value="">-- Seleziona --</option>';
-            allClients.forEach(c => {
-                let opt = document.createElement('option');
-                opt.value = c.id; opt.text = c.name;
-                sel.appendChild(opt);
-            });
-        }
-
-        async function loadPackageTemplates() {
-            const snap = await getDocs(collection(db, "package_templates"));
-            packageTemplates = snap.docs.map(d => ({id: d.id, ...d.data()}));
-        }
-
-        async function loadEvents() {
-            showLoader(true);
-            const snap = await getDocs(collection(db, "events"));
-            const events = [];
-            let revenue = 0;
-            snap.forEach(d => {
-                const data = d.data();
-                let cls = 'evt-task';
-                if(data.type === 'lesson') cls = 'evt-lesson';
-                if(data.type === 'shift') cls = 'evt-shift';
-                
-                if(data.price && data.paymentStatus === 'paid') revenue += parseFloat(data.price);
-                
-                events.push({
-                    id: d.id,
-                    title: data.title || (data.type==='lesson' ? data.clientName : "Evento"),
-                    start: data.start, end: data.end,
-                    classNames: [cls],
-                    extendedProps: data
-                });
-            });
-            calendar.removeAllEvents();
-            calendar.addEventSource(events);
-            document.getElementById('monthlyRevenue').innerText = `€${revenue}`;
-            showLoader(false);
-        }
-
-        // --- CLIENT MANAGER ---
-        window.renderClientListSide = function() {
-            const div = document.getElementById('clientsList');
-            div.innerHTML = '';
-            allClients.forEach(c => {
-                const btn = document.createElement('button');
-                btn.className = 'btn btn-outline-secondary text-start border-0 border-bottom rounded-0 py-3';
-                btn.innerHTML = `<strong>${c.name}</strong><br><small>${c.phone || ''}</small>`;
-                btn.onclick = () => loadClientDetails(c);
-                div.appendChild(btn);
-            });
-        }
-
-        window.showNewClientForm = function() {
-            document.getElementById('clientTabContent').innerHTML = `
-                <h4>Nuovo Cliente</h4>
-                <div class="mb-3"><label>Nome</label><input type="text" id="newCName" class="form-control"></div>
-                <div class="mb-3"><label>Telefono</label><input type="text" id="newCPhone" class="form-control"></div>
-                <div class="mb-3"><label>Note</label><textarea id="newCNotes" class="form-control"></textarea></div>
-                <button class="btn btn-success" onclick="saveNewClient()">Crea</button>
-            `;
-        }
-
-        async function saveNewClientInternal() {
-            const name = document.getElementById('newCName').value;
-            if(!name) return alert("Manca il nome");
-            await addDoc(collection(db, "clients"), { 
-                name, phone: document.getElementById('newCPhone').value, 
-                notes: document.getElementById('newCNotes').value 
-            });
-            await loadClients(); renderClientListSide();
-            document.getElementById('clientTabContent').innerHTML = `<div class="alert alert-success">Cliente creato!</div>`;
-        }
-
-        window.loadClientDetails = async function(client) {
-            // Tab Info
-            const tabInfo = `
-                <div class="tab-pane fade show active" id="tabInfo">
-                    <h3>${client.name}</h3>
-                    <textarea class="form-control mt-3" rows="8" id="cNotes" onblur="updateClientNote('${client.id}')">${client.notes||''}</textarea>
-                </div>`;
-            
-            // Tab Files (Semplificato)
-            const tabMedia = `
-                <div class="tab-pane fade" id="tabMedia">
-                    <input type="file" id="upFile" class="form-control mb-2">
-                    <button class="btn btn-dark btn-sm mb-3" onclick="uploadCFile('${client.id}')">Carica</button>
-                    <div id="fileBox">Caricamento...</div>
-                </div>`;
-
-            // Tab Pack
-            let packHtml = `<div class="tab-pane fade" id="tabPack">`;
-            if(client.activePackage) {
-                const p = client.activePackage;
-                packHtml += `<div class="alert alert-primary">
-                    <strong>${p.name}</strong><br>Lezioni: ${p.currentCount}/${p.total}
-                    <button class="btn btn-sm btn-danger d-block mt-2" onclick="removePack('${client.id}')">Rimuovi</button>
-                </div>`;
-            } else {
-                packHtml += `<select class="form-select mb-2" id="selPack">
-                    <option value="">Seleziona Pack...</option>
-                    ${packageTemplates.map(t=>`<option value="${t.id}">${t.name} (€${t.price})</option>`).join('')}
-                </select>
-                <button class="btn btn-primary" onclick="assignPack('${client.id}')">Attiva</button>`;
-            }
-            packHtml += `</div>`;
-
-            document.getElementById('clientTabContent').innerHTML = `<div class="tab-content">${tabInfo}${tabMedia}${packHtml}</div>`;
-            loadCFiles(client.id);
-        }
-
-        // Helper funzioni cliente (Globali per onclick)
-        window.updateClientNote = async (cid) => await updateDoc(doc(db,"clients",cid), {notes: document.getElementById('cNotes').value});
-        
-        window.assignPack = async (cid) => {
-            const pid = document.getElementById('selPack').value;
-            if(!pid) return;
-            const t = packageTemplates.find(x=>x.id===pid);
-            await updateDoc(doc(db,"clients",cid), {
-                activePackage: { templateId: pid, name: t.name, total: t.totalSessions, currentCount: 0, installments: t.installments }
-            });
-            // Reload semplice
-            loadClientDetails(allClients.find(c=>c.id===cid)); // Nota: allClients va ricaricato per vedere modifica reale, qui è trick visivo
-            await loadClients(); // Reload vero
-        }
-        
-        window.removePack = async (cid) => {
-            if(!confirm("Sicuro?")) return;
-            await updateDoc(doc(db,"clients",cid), { activePackage: null });
-            await loadClients();
-            document.getElementById('clientTabContent').innerHTML = "Pacchetto rimosso. Seleziona di nuovo il cliente.";
-        }
-
-        // --- FILES ---
-        window.uploadCFile = async (cid) => {
-            const f = document.getElementById('upFile').files[0];
-            if(!f || f.size>800000) return alert("File max 800KB");
-            const r = new FileReader();
-            r.onload = async (e) => {
-                await addDoc(collection(db,`clients/${cid}/files`), {name:f.name, data:e.target.result});
-                loadCFiles(cid);
-            };
-            r.readAsDataURL(f);
-        }
-        
-        window.loadCFiles = async (cid) => {
-            const snap = await getDocs(collection(db,`clients/${cid}/files`));
-            const box = document.getElementById('fileBox');
-            if(snap.empty) { box.innerHTML = "Nessun file."; return; }
-            box.innerHTML = '';
-            snap.forEach(d => {
-                const f = d.data();
-                box.innerHTML += `<div class="file-card"><a href="${f.data}" download="${f.name}">${f.name}</a> <button class="btn-close" onclick="delFile('${cid}','${d.id}')"></button></div>`;
-            });
-        }
-        window.delFile = async (cid, fid) => {
-            await deleteDoc(doc(db,`clients/${cid}/files`, fid));
-            loadCFiles(cid);
-        }
-
-        // --- PACKAGES ---
-        window.renderInstallmentRows = function() {
-            const c = document.getElementById('installmentsContainer');
-            c.innerHTML = '';
-            tempInstallments.forEach((i, idx) => {
-                c.innerHTML += `<div class="d-flex gap-2 mb-2 align-items-center">
-                    Lez.<input type="number" class="form-control" value="${i.at}" onchange="updInst(${idx},'at',this.value)" style="width:70px">
-                    €<input type="number" class="form-control" value="${i.amount}" onchange="updInst(${idx},'amount',this.value)" style="width:80px">
-                    <button class="btn btn-outline-danger" onclick="remInst(${idx})">X</button>
-                </div>`;
-            });
-        }
-        window.updInst = (i,k,v) => tempInstallments[i][k] = parseInt(v);
-        window.addInstallmentRow = () => { tempInstallments.push({at:1, amount:0}); renderInstallmentRows(); }
-        window.remInst = (i) => { tempInstallments.splice(i,1); renderInstallmentRows(); }
-        
-        async function savePackageTemplateInternal() {
-            const name = document.getElementById('pkgName').value;
-            if(!name) return;
-            await addDoc(collection(db, "package_templates"), {
-                name, totalSessions: parseInt(document.getElementById('pkgCount').value), 
-                price: parseFloat(document.getElementById('pkgPrice').value), installments: tempInstallments
-            });
-            location.reload();
-        }
-
-        // --- EVENTS ---
-        window.toggleFields = function() {
-            const t = document.querySelector('input[name="eventType"]:checked').value;
-            document.getElementById('lessonFields').classList.toggle('d-none', t !== 'lesson');
-            document.getElementById('genericFields').classList.toggle('d-none', t === 'lesson');
-        }
-
-        window.checkPackageStatus = function() {
-            const cid = document.getElementById('clientSelect').value;
-            const alertBox = document.getElementById('packageAlertBox');
-            if(!cid) { alertBox.classList.add('d-none'); return; }
-            const c = allClients.find(x=>x.id===cid);
-            if(c && c.activePackage) {
-                alertBox.classList.remove('d-none');
-                const next = c.activePackage.currentCount + 1;
-                document.getElementById('packProgressBadge').innerText = `${c.activePackage.currentCount}/${c.activePackage.total}`;
-                document.getElementById('nextLessonNum').innerText = next;
-                
-                const trigger = c.activePackage.installments.find(i => i.at === next);
-                if(trigger) {
-                    document.getElementById('paymentTriggerMsg').classList.remove('d-none');
-                    document.getElementById('triggerAmount').innerText = trigger.amount;
-                    document.getElementById('manualPrice').value = trigger.amount;
-                    alertBox.classList.add('alert-danger'); alertBox.classList.remove('alert-info');
-                } else {
-                    document.getElementById('paymentTriggerMsg').classList.add('d-none');
-                    alertBox.classList.remove('alert-danger'); alertBox.classList.add('alert-info');
-                }
-            } else { alertBox.classList.add('d-none'); }
-        }
-
-        function openEventModalInternal(date, event) {
-            document.getElementById('eventForm').reset();
-            const modal = new bootstrap.Modal(document.getElementById('eventModal'));
-            if(event) {
-                const p = event.extendedProps;
-                document.getElementById('eventId').value = event.id;
-                document.getElementById('startInput').value = toIso(event.start);
-                document.getElementById('endInput').value = toIso(event.end);
-                document.getElementById('btnDelete').style.display = 'block';
-                document.querySelector(`input[value="${p.type}"]`).checked = true;
-                if(p.type === 'lesson') {
-                    document.getElementById('clientSelect').value = p.clientId || '';
-                    document.getElementById('notes').value = p.notes || '';
-                    document.getElementById('manualPrice').value = p.price || '';
-                    document.getElementById('isPaidCheck').checked = (p.paymentStatus === 'paid');
-                    document.getElementById('packageAlertBox').classList.add('d-none');
-                } else {
-                    document.getElementById('genericTitle').value = event.title;
-                }
-            } else {
-                let d = date ? new Date(date) : new Date();
-                if(date && date.getHours()===0) d.setHours(9,0,0);
-                document.getElementById('startInput').value = toIso(d);
-                document.getElementById('endInput').value = toIso(new Date(d.getTime()+3600000));
-                document.getElementById('btnDelete').style.display = 'none';
-                document.getElementById('packageAlertBox').classList.add('d-none');
-            }
-            toggleFields();
-            modal.show();
-        }
-
-        async function saveEventInternal() {
-            const id = document.getElementById('eventId').value;
-            const type = document.querySelector('input[name="eventType"]:checked').value;
-            const start = document.getElementById('startInput').value;
-            const end = document.getElementById('endInput').value;
-            if(!start) return;
-
-            let data = { type, start, end };
-            if(type === 'lesson') {
-                const cid = document.getElementById('clientSelect').value;
-                if(!cid) return alert("Scegli cliente");
-                const c = allClients.find(x=>x.id===cid);
-                
-                data.clientId = cid; data.clientName = c.name; 
-                data.notes = document.getElementById('notes').value;
-                data.title = c.name;
-                data.price = document.getElementById('manualPrice').value;
-                data.paymentStatus = document.getElementById('isPaidCheck').checked ? 'paid' : 'pending';
-
-                // Update Pack Logic (Solo se nuovo evento)
-                if(!id && document.getElementById('usePackageCheck').checked && c.activePackage) {
-                    const next = c.activePackage.currentCount + 1;
-                    const trigger = c.activePackage.installments.find(i=>i.at===next);
-                    if(trigger) data.paymentAlert = true;
-                    await updateDoc(doc(db,"clients",cid), { activePackage: {...c.activePackage, currentCount: next} });
-                }
-            } else {
-                data.title = document.getElementById('genericTitle').value || (type==='shift'?'Turno':'Note');
-            }
-
-            showLoader(true);
-            if(id) await updateDoc(doc(db,"events",id), data);
-            else await addDoc(collection(db,"events"), data);
-            
-            bootstrap.Modal.getInstance(document.getElementById('eventModal')).hide();
-            await loadEvents(); await loadClients();
-            showLoader(false);
-        }
-
-        async function deleteEventInternal() {
-            if(confirm("Eliminare?")) {
-                await deleteDoc(doc(db, "events", document.getElementById('eventId').value));
-                location.reload();
-            }
-        }
-
-        function toIso(d) {
-            const pad = n => n<10?'0'+n:n;
-            return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-        }
-        function showLoader(v) { document.getElementById('loader').style.display = v?'flex':'none'; }
-    </script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/locales/it.global.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@6.1.10/index.global.min.js'></script> <!-- Importante per Drag & Drop -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>
